@@ -1,0 +1,21 @@
+---
+title: "Programa de Prevención y Control de Arbovirosis | 2026 | Morelos"
+format: 
+  dashboard:
+    nav-buttons: [twitter, github, facebook]
+    logo: https://framework-gb.cdn.gob.mx/gobmx/img/logo_blanco.svg
+theme: custom.scss
+---
+
+```{r setup}
+library(sf)
+library(magrittr)
+library(mapgl)
+load("/Users/fdzul/Documents/geocoding_mx_2026_dengue/4.RData/dengue_mx_2026.RData")
+source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.persisten_dengue_transmission_2026/persistent_dengue_transmission_10_durango/mp_heatmap.R")
+source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.persisten_dengue_transmission_2026/persistent_dengue_transmission_10_durango/mp_transmission_chains.R")
+library(fishualize)
+
+source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.persisten_dengue_transmission_2026/persistent_dengue_transmission_10_durango/mp_dengue_cases.R")
+```
+
