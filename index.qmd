@@ -19,3 +19,527 @@ library(fishualize)
 source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.persisten_dengue_transmission_2026/persistent_dengue_transmission_10_durango/mp_dengue_cases.R")
 ```
 
+
+# [**Focos de Transmisión Activa**]{style="font-size:8pt"}
+
+::: panel-tabset
+
+### [**Cuernavaca**]{style="color:#990000"}
+```{=html}
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal con scroll - tres COLUMNAS */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* Tres COLUMNAS iguales */
+  gap: 25px;
+  margin: 20px 0;
+  max-height: 85vh;          /* Altura máxima para scroll */
+  overflow-y: auto;          /* Scroll vertical */
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fafafa;
+  align-items: start;
+}
+
+/* Cada columna es un contenedor flexible que apila sus elementos */
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Título de columna */
+.column-header {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  padding: 8px;
+  background-color: #772953;
+  color: white;
+  border-radius: 6px;
+  margin: 0;
+}
+
+/* Estilo para cada tarjeta de mapa */
+.grid-card {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border-radius: 12px;
+  background: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.grid-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+/* Asegura que los mapas tengan tamaño consistente */
+.grid-card .html-widget,
+.grid-card iframe {
+  width: 100% !important;
+  height: 400px !important;
+  border-radius: 8px;
+}
+
+/* Responsive: en móviles, una sola columna */
+@media (max-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: 1fr;  /* Una columna en móvil */
+    max-height: 70vh;
+    gap: 15px;
+    padding: 10px;
+  }
+  .column-header {
+    font-size: 1rem;
+  }
+  .grid-card .html-widget,
+  .grid-card iframe {
+    height: 300px !important;
+  }
+}
+</style>
+```
+::::::::::::::::::::: responsive-grid
+
+<div class="columna">
+<div class="column-header"> Probables </div>
+
+::: grid-card
+
+```{r distribucion_cuarnavaca_p,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = c("Cuernavaca", 
+                                 "Emiliano Zapata",
+                                 "Jiutepec",
+                                 "Xochitepec",
+                                 "Temixco"),
+                    cve_edo = "17")
+
+
+```
+:::
+
+::: grid-card
+
+```{r heatmap_cuernavaca_p,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_heatmap(yrs = 2026,
+                    locality = c("Cuernavaca", 
+                                 "Emiliano Zapata",
+                                 "Jiutepec",
+                                 "Xochitepec",
+                                 "Temixco"),
+                    cve_edo = "17")
+
+
+```
+:::
+
+::: grid-card
+
+```{r chains_cuernavaca_p,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_transmission_chains(yrs = 2026,
+                    locality = c("Cuernavaca", 
+                                 "Emiliano Zapata",
+                                 "Jiutepec",
+                                 "Xochitepec",
+                                 "Temixco"),
+                    cve_edo = "17")
+
+
+```
+:::
+
+
+
+</div><div class="columna">
+<div class="column-header"> Confirmados </div>
+
+::: grid-card
+```{r distribucion_cuernavaca_c,echo=FALSE}
+z |>
+    dplyr::filter(ESTATUS_CASO == 2) |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = c("Cuernavaca", 
+                                 "Emiliano Zapata",
+                                 "Jiutepec",
+                                 "Xochitepec",
+                                 "Temixco"))
+
+```
+:::
+
+::: grid-card
+```{r heatmap_cuernavaca_c,echo=FALSE}
+z |>
+    dplyr::filter(ESTATUS_CASO == 2) |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = c("Cuernavaca", 
+                                 "Emiliano Zapata",
+                                 "Jiutepec",
+                                 "Xochitepec",
+                                 "Temixco"))
+
+```
+:::
+
+::: grid-card
+
+:::
+
+
+</div>
+:::::::::::::::::::::
+
+### [**Probables**]{style="color:#990000"}
+
+```{=html}
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal con scroll - tres COLUMNAS */
+.responsive-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* Tres COLUMNAS iguales */
+  gap: 25px;
+  margin: 20px 0;
+  max-height: 85vh;          /* Altura máxima para scroll */
+  overflow-y: auto;          /* Scroll vertical */
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fafafa;
+  align-items: start;
+}
+
+/* Cada columna es un contenedor flexible que apila sus elementos */
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Título de columna */
+.column-header {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  padding: 8px;
+  background-color: #772953;
+  color: white;
+  border-radius: 6px;
+  margin: 0;
+}
+
+/* Estilo para cada tarjeta de mapa */
+.grid-card2 {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border-radius: 12px;
+  background: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.grid-card2:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+/* Asegura que los mapas tengan tamaño consistente */
+.grid-card2 .html-widget,
+.grid-card2 iframe {
+  width: 100% !important;
+  height: 400px !important;
+  border-radius: 8px;
+}
+
+/* Responsive: en móviles, una sola columna */
+@media (max-width: 768px) {
+  .responsive-grid2 {
+    grid-template-columns: 1fr;  /* Una columna en móvil */
+    max-height: 70vh;
+    gap: 15px;
+    padding: 10px;
+  }
+  .column-header {
+    font-size: 1rem;
+  }
+  .grid-card2 .html-widget,
+  .grid-card2 iframe {
+    height: 300px !important;
+  }
+}
+</style>
+```
+::::::::::::::::::::: responsive-grid2
+
+<div class="columna">
+<div class="column-header"> Distribución de Casos </div>
+
+::: grid-card2
+
+```{r distribucion_zacatepec,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = "Zacatepec de Hidalgo",
+                    cve_edo = "17")
+
+
+```
+:::
+
+::: grid-card2
+
+```{r distribucion_jojutla,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = "Jujutla",
+                    cve_edo = "17")
+
+
+```
+:::
+
+::: grid-card2
+
+```{r distribucion_cautla,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = "Cautla",
+                    cve_edo = "17")
+
+
+```
+:::
+
+::: grid-card2
+
+```{r distribucion_yautepec,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = "Yautepec de Zaragoza",
+                    cve_edo = "17")
+
+
+```
+:::
+
+
+
+</div><div class="columna">
+<div class="column-header"> Mapas de Calor</div>
+
+::: grid-card2
+```{r heatmap_zacatepec,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = "Zacatepec de Hidalgo")
+
+```
+:::
+
+::: grid-card2
+```{r heatmap_jojutla,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = "Jojutla")
+
+```
+:::
+
+::: grid-card2
+```{r heatmap_cuatla,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = "Cuatla")
+
+```
+:::
+
+::: grid-card2
+```{r heatmap_yautepec,echo=FALSE}
+z |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "17",
+           locality = "Yautepec de Zaragoza")
+
+```
+:::
+
+
+</div><div class="columna">
+<div class="column-header"> Cadenas de Transmisión</div>
+
+
+::: grid-card2
+
+```{r chains_zacatepec,echo=FALSE}
+loc <- rgeomex::extract_locality(cve_edo = "17",
+                                 locality = "Zacatepec de Hidalgo")
+mapview::mapview(loc)
+
+```
+:::
+
+::: grid-card2
+
+```{r chains_jojutla,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_transmission_chains(
+                           yrs = 2026,
+                           locality = "Jojutla",
+                           cve_edo = "17")
+
+```
+:::
+
+::: grid-card2
+
+```{r chains_cuautla,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_transmission_chains(
+                           yrs = 2026,
+                           locality = "Cuautla",
+                           cve_edo = "17")
+```
+:::
+
+::: grid-card2
+
+```{r chains_yautepec,echo=FALSE}
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_transmission_chains(
+                           yrs = 2026,
+                           locality = "Yautepec de Zaragoza",
+                           cve_edo = "17")
+```
+:::
+
+
+</div>
+:::::::::::::::::::::
+
+:::
+
