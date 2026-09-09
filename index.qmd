@@ -475,9 +475,19 @@ z |>
 ::: grid-card2
 
 ```{r chains_zacatepec,echo=FALSE}
-loc <- rgeomex::extract_locality(cve_edo = "17",
-                                 locality = "Zacatepec de Hidalgo")
-mapview::mapview(loc)
+z |>
+    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_transmission_chains(
+        yrs = 2026,
+        locality = "Zacatepec de Hidalgo",
+        cve_edo = "17")
+
 
 ```
 :::
